@@ -1,26 +1,353 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Design system: quiet, editorial luxury retail.
+ * Monochrome palette, square corners, hairline borders, small uppercase
+ * tracked labels, generous whitespace; imagery carries the page.
+ */
+
+@theme {
+  /* Color tokens */
+  --color-canvas: #ffffff;
+  --color-surface: #f6f5f3; /* product image backdrop, subtle panels */
+  --color-ink: #111111; /* primary text, primary buttons */
+  --color-ink-muted: #6b6b6b; /* secondary text */
+  --color-ink-subtle: #9a9a9a; /* placeholders, disabled */
+  --color-line: #dcdad6; /* hairline borders */
+  --color-line-strong: #111111;
+  --color-accent: #8c1d2c; /* sparing: sale, errors, badges */
+  --color-focus: #2457d6;
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --text-eyebrow: 0.6875rem; /* 11px */
+  --text-eyebrow--line-height: 1rem;
+  --text-small: 0.8125rem; /* 13px */
+  --text-small--line-height: 1.25rem;
+  --text-body: 0.9375rem; /* 15px */
+  --text-body--line-height: 1.5rem;
+  --text-title: clamp(1.25rem, 1.05rem + 0.8vw, 1.75rem);
+  --text-title--line-height: 1.3;
+  --text-display: clamp(1.75rem, 1.2rem + 2.2vw, 3.25rem);
+  --text-display--line-height: 1.1;
+
+  --tracking-label: 0.14em;
+  --tracking-wide-label: 0.22em;
+
+  /* Layout */
+  --container-site: 90rem; /* 1440px */
+  --container-prose: 40rem;
+  --spacing-gutter: 1rem;
+  --spacing-gutter-md: 2rem;
+  --spacing-gutter-xl: 3rem;
+  --spacing-section: 4rem;
+  --spacing-section-lg: 7rem;
+  --spacing-header: 3.5rem;
+  --spacing-header-lg: 4.5rem;
+
+  /* Shape: square by default, no shadows */
+  --radius-none: 0;
+  --radius-pill: 9999px;
+
+  /* Breakpoints */
+  --breakpoint-xs: 30rem;
+  --breakpoint-3xl: 100rem;
+
+  /* Motion */
+  --ease-soft: cubic-bezier(0.2, 0, 0, 1);
+  --duration-base: 200ms;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img,
+  picture,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--color-line);
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-canvas);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Layout primitives */
+
+/* Page-width wrapper with responsive gutters. */
+@utility container-site {
+  width: 100%;
+  max-width: var(--container-site);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+
+  @media (min-width: 48rem) {
+    padding-inline: var(--spacing-gutter-md);
+  }
+  @media (min-width: 80rem) {
+    padding-inline: var(--spacing-gutter-xl);
+  }
+}
+
+/* Narrow reading column (policies, editorial copy). */
+@utility container-prose {
+  width: 100%;
+  max-width: var(--container-prose);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+
+/* Vertical rhythm between page sections. */
+@utility section {
+  padding-block: var(--spacing-section);
+
+  @media (min-width: 64rem) {
+    padding-block: var(--spacing-section-lg);
+  }
+}
+
+/* Product grid: 2 columns on phones, 3 on tablets, 4 on desktop. */
+@utility product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem 0.5rem;
+
+  @media (min-width: 48rem) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3rem 1rem;
+  }
+  @media (min-width: 80rem) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Type primitives */
+
+/* Small uppercase tracked label: nav items, categories, metadata. */
+@utility eyebrow {
+  font-size: var(--text-eyebrow);
+  line-height: var(--text-eyebrow--line-height);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+@utility text-muted {
+  color: var(--color-ink-muted);
+}
+
+@utility heading-display {
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  letter-spacing: 0.02em;
+  font-weight: 300;
+}
+
+@utility heading-title {
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  letter-spacing: 0.02em;
+  font-weight: 300;
+}
+
+@layer components {
+  /* Buttons: rectangular, uppercase, tracked, no shadows or radius. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.75rem 2rem;
+    border: 1px solid var(--color-ink);
+    border-radius: var(--radius-none);
+    background: transparent;
+    color: var(--color-ink);
+    font-size: var(--text-eyebrow);
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-base) var(--ease-soft),
+      color var(--duration-base) var(--ease-soft),
+      border-color var(--duration-base) var(--ease-soft);
+  }
+
+  .btn-primary {
+    background: var(--color-ink);
+    color: var(--color-canvas);
+  }
+  .btn-primary:hover {
+    background: transparent;
+    color: var(--color-ink);
+  }
+
+  .btn-outline:hover {
+    background: var(--color-ink);
+    color: var(--color-canvas);
+  }
+
+  /* For use over photography. */
+  .btn-light {
+    border-color: var(--color-canvas);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+  .btn-light:hover {
+    background: transparent;
+    color: var(--color-canvas);
+  }
+
+  .btn-block {
+    width: 100%;
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    border-color: var(--color-line);
+    background: transparent;
+    color: var(--color-ink-subtle);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* Links: text-style with a thin underline that reacts on hover. */
+  .link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+    transition: text-decoration-color var(--duration-base) var(--ease-soft);
+  }
+  .link:hover {
+    text-decoration-color: transparent;
+  }
+
+  /* Nav link: uppercase label, underline appears on hover/current. */
+  .nav-link {
+    @apply eyebrow;
+    padding-block: 0.5rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--duration-base) var(--ease-soft);
+  }
+  .nav-link:hover,
+  .nav-link[aria-current="page"] {
+    border-bottom-color: var(--color-ink);
+  }
+
+  /* Form fields: bottom-border only, like editorial checkouts. */
+  .field {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-line);
+    border-radius: var(--radius-none);
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    transition: border-color var(--duration-base) var(--ease-soft);
+  }
+  .field::placeholder {
+    color: var(--color-ink-subtle);
+  }
+  .field:focus {
+    outline: none;
+    border-bottom-color: var(--color-line-strong);
+  }
+
+  /* Product card: borderless; image on a soft surface, text underneath. */
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .product-card__media {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+  .product-card__media > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 600ms var(--ease-soft);
+  }
+  .product-card:hover .product-card__media > img {
+    transform: scale(1.03);
+  }
+  .product-card__name {
+    font-size: var(--text-small);
+    line-height: var(--text-small--line-height);
+    letter-spacing: 0.02em;
+  }
+  .product-card__price {
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+  }
+
+  /* Hairline divider and bordered panel. */
+  .rule {
+    border-top: 1px solid var(--color-line);
+  }
+  .panel {
+    border: 1px solid var(--color-line);
+    padding: 1.5rem;
+  }
 }
