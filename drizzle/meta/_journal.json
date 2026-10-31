@@ -8,6 +8,13 @@
       "when": 1793392672524,
       "tag": "0000_loving_junta",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793473333353,
+      "tag": "0001_many_longshot",
+      "breakpoints": true
     }
   ]
 }
