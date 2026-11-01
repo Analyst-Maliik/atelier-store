@@ -311,6 +311,9 @@
     outline: none;
     border-bottom-color: var(--color-line-strong);
   }
+  .field[aria-invalid="true"] {
+    border-bottom-color: var(--color-accent);
+  }
 
   /* Product card: borderless; image on a soft surface, text underneath. */
   .product-card {

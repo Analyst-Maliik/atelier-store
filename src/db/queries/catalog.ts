@@ -52,6 +52,61 @@ export async function getProducts(): Promise<Product[]> {
   return rows.map(toProduct);
 }
 
+/** Most recently added first; id breaks ties for rows created in one batch. */
+export async function getNewArrivals(limit = 24): Promise<Product[]> {
+  cacheLife("minutes");
+  cacheTag("products");
+
+  const rows = await db
+    .select(columns)
+    .from(products)
+    .innerJoin(categories, eq(products.categoryId, categories.id))
+    .orderBy(desc(products.createdAt), desc(products.id))
+    .limit(limit);
+  return rows.map(toProduct);
+}
+
+export async function getCategoryBySlug(
+  slug: string,
+): Promise<{ slug: string; name: string } | null> {
+  cacheLife("minutes");
+  cacheTag("products");
+
+  const [row] = await db
+    .select({ slug: categories.slug, name: categories.name })
+    .from(categories)
+    .where(eq(categories.slug, slug))
+    .limit(1);
+  return row ?? null;
+}
+
+export async function getCategories(): Promise<{ slug: string; name: string }[]> {
+  cacheLife("minutes");
+  cacheTag("products");
+
+  return db
+    .select({ slug: categories.slug, name: categories.name })
+    .from(categories)
+    .orderBy(asc(categories.id));
+}
+
+export async function getCategorySlugs(): Promise<string[]> {
+  return (await getCategories()).map((c) => c.slug);
+}
+
+export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
+  cacheLife("minutes");
+  cacheTag("products");
+
+  const rows = await db
+    .select(columns)
+    .from(products)
+    .innerJoin(categories, eq(products.categoryId, categories.id))
+    .where(eq(categories.slug, categorySlug))
+    .orderBy(desc(products.createdAt), desc(products.id));
+  return rows.map(toProduct);
+}
+
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   cacheLife("minutes");
   cacheTag("products");

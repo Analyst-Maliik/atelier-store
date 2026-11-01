@@ -15,6 +15,13 @@
       "when": 1793473333353,
       "tag": "0001_many_longshot",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793567077126,
+      "tag": "0002_bizarre_blonde_phantom",
+      "breakpoints": true
     }
   ]
 }

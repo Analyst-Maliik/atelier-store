@@ -15,8 +15,9 @@ export function NewsletterForm() {
   );
 
   return (
-    // POST only: a GET form would put the address in the URL and history.
-    <form action={formAction} method="POST" className="relative w-full max-w-md" noValidate>
+    // A function action always submits as POST (React sets the method), so the address
+    // never reaches the URL or history. Do not add method/encType props: React warns.
+    <form action={formAction} className="relative w-full max-w-md" noValidate>
       <label htmlFor="newsletter-email" className="eyebrow mb-3 block">
         Newsletter
       </label>
