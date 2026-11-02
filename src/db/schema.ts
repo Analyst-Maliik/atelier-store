@@ -2,3 +2,4 @@
 export * from "./schema/catalog";
 export * from "./schema/newsletter";
 export * from "./schema/auth";
+export * from "./schema/orders";

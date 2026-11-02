@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { BagCount } from "@/components/cart/bag-count";
 
 const nav = [
   { label: "New", href: "/new-arrivals" },
@@ -65,7 +67,9 @@ export function SiteHeader() {
               Account
             </Link>
             <Link href="/cart" className="nav-link">
-              Bag (0)
+              <Suspense fallback="Bag">
+                <BagCount />
+              </Suspense>
             </Link>
           </div>
         </div>

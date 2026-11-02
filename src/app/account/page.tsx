@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { signOut } from "@/app/actions/auth";
 import { requireUser } from "@/lib/session";
 
 export const metadata: Metadata = {
@@ -9,48 +8,48 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-async function AccountDetails() {
+async function Overview() {
   const user = await requireUser("/account");
+  const firstName = user.name.split(" ")[0];
 
   return (
     <>
-      <h1 className="heading-title">Hello, {user.name}</h1>
-      <dl className="mt-10 grid gap-6 border-t border-line pt-8 sm:grid-cols-2">
-        <div>
-          <dt className="eyebrow text-muted mb-2">Name</dt>
-          <dd>{user.name}</dd>
-        </div>
-        <div>
-          <dt className="eyebrow text-muted mb-2">Email</dt>
-          <dd className="break-all">{user.email}</dd>
-        </div>
-      </dl>
+      <h1 className="heading-title">Hello, {firstName}</h1>
+      <p className="text-muted mt-3 max-w-md text-small">
+        Manage your details here. Orders and addresses will appear as we add them.
+      </p>
 
-      <div className="mt-12 flex flex-wrap gap-4">
-        {user.role === "admin" && (
-          <Link href="/admin" className="btn btn-outline">
-            Admin
+      <div className="mt-10 grid gap-6 sm:grid-cols-2">
+        <Link href="/account/details" className="panel block hover:border-ink">
+          <p className="eyebrow text-muted mb-2">Account details</p>
+          <p>{user.name}</p>
+          <p className="text-muted mt-1 break-all text-small">{user.email}</p>
+        </Link>
+        <Link href="/new-arrivals" className="panel block hover:border-ink">
+          <p className="eyebrow text-muted mb-2">Keep browsing</p>
+          <p>New arrivals</p>
+          <p className="text-muted mt-1 text-small">See what has just joined the house.</p>
+        </Link>
+        {user.role === "admin" && !user.banned && (
+          <Link href="/admin" className="panel block hover:border-ink">
+            <p className="eyebrow text-muted mb-2">Administration</p>
+            <p>Admin area</p>
+            <p className="text-muted mt-1 text-small">Manage the store.</p>
           </Link>
         )}
-        <form action={signOut}>
-          <button type="submit" className="btn btn-primary">
-            Sign out
-          </button>
-        </form>
       </div>
     </>
   );
 }
 
+function OverviewSkeleton() {
+  return <div className="h-40" aria-hidden />;
+}
+
 export default function AccountPage() {
   return (
-    <section className="container-site py-section lg:py-section-lg">
-      <div className="max-w-xl">
-        <p className="eyebrow text-muted mb-2">Your account</p>
-        <Suspense>
-          <AccountDetails />
-        </Suspense>
-      </div>
-    </section>
+    <Suspense fallback={<OverviewSkeleton />}>
+      <Overview />
+    </Suspense>
   );
 }

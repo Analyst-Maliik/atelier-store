@@ -2,6 +2,7 @@ import Link from "next/link";
 import { formatPrice } from "@/lib/format";
 import { getStockState } from "@/lib/stock";
 import type { Product } from "@/lib/types";
+import { AddToBagForm } from "@/components/cart/add-to-bag-form";
 import { StockStatus } from "./stock-status";
 
 export function ProductInfo({ product }: { product: Product }) {
@@ -22,10 +23,7 @@ export function ProductInfo({ product }: { product: Product }) {
       </header>
 
       <div className="space-y-3">
-        {/* Cart is not wired up yet; this is the final control only. */}
-        <button type="button" className="btn btn-primary btn-block" disabled={soldOut}>
-          {soldOut ? "Sold out" : "Add to bag"}
-        </button>
+        <AddToBagForm slug={product.slug} soldOut={soldOut} />
         <p className="text-muted text-small text-center">
           Complimentary shipping on orders over $250. Free returns within 30 days.
         </p>

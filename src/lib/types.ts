@@ -1,4 +1,6 @@
 export type Product = {
+  /** Database id: used to reference the product from order lines. */
+  id: number;
   slug: string;
   name: string;
   description: string;

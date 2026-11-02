@@ -22,6 +22,13 @@
       "when": 1793567077126,
       "tag": "0002_bizarre_blonde_phantom",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793575093178,
+      "tag": "0003_fluffy_alex_power",
+      "breakpoints": true
     }
   ]
 }
