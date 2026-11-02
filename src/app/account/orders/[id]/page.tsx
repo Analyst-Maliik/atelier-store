@@ -6,6 +6,7 @@ import { AutoRefresh } from "@/components/checkout/auto-refresh";
 import { OrderLines } from "@/components/orders/order-lines";
 import { getOrderWithItemsForUser } from "@/db/queries/orders";
 import { isUuid } from "@/lib/checkout";
+import { formatOrderDate } from "@/lib/format";
 import { ORDER_STATUS_COPY } from "@/lib/order-status";
 import { requireUser } from "@/lib/session";
 
@@ -13,13 +14,6 @@ export const metadata: Metadata = {
   title: "Order | Atelier Store",
   robots: { index: false },
 };
-
-const placedOn = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
 
 /** Reads the session and the database, so it renders inside <Suspense>. */
 async function OrderDetail({ params }: { params: PageProps<"/account/orders/[id]">["params"] }) {
@@ -39,7 +33,7 @@ async function OrderDetail({ params }: { params: PageProps<"/account/orders/[id]
     <div className="max-w-2xl">
       <p className="eyebrow text-muted mb-2">Order</p>
       <h1 className="heading-title">AT-{order.orderNumber}</h1>
-      <p className="text-muted mt-3 text-small">Placed on {placedOn.format(order.createdAt)}</p>
+      <p className="text-muted mt-3 text-small">Placed on {formatOrderDate(order.createdAt)}</p>
 
       <div className="panel mt-8" role="status">
         <p className="eyebrow text-muted mb-2">{copy.eyebrow}</p>
@@ -62,8 +56,8 @@ async function OrderDetail({ params }: { params: PageProps<"/account/orders/[id]
             Back to your bag
           </Link>
         )}
-        <Link href="/account" className={retryable ? "btn btn-outline" : "btn btn-primary"}>
-          Back to your account
+        <Link href="/account/orders" className={retryable ? "btn btn-outline" : "btn btn-primary"}>
+          All orders
         </Link>
       </div>
     </div>

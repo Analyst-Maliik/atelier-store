@@ -1,5 +1,16 @@
 import type { OrderStatus } from "@/db/schema";
 
+/** Short state names for lists, where the full sentences above would not fit. */
+export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
+  pending: "Confirming payment",
+  paid: "Confirmed",
+  failed: "Payment failed",
+  expired: "Expired",
+  refunding: "Refunding",
+  refunded: "Refunded",
+  needs_review: "Under review",
+};
+
 /** Customer-facing wording for each order state, shared by the confirmation and account pages. */
 export const ORDER_STATUS_COPY: Record<OrderStatus, { eyebrow: string; title: string; body: string }> = {
   pending: {

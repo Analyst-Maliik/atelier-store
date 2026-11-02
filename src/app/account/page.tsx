@@ -16,10 +16,15 @@ async function Overview() {
     <>
       <h1 className="heading-title">Hello, {firstName}</h1>
       <p className="text-muted mt-3 max-w-md text-small">
-        Manage your details here. Orders and addresses will appear as we add them.
+        Review your orders and manage your details here. Addresses will appear as we add them.
       </p>
 
       <div className="mt-10 grid gap-6 sm:grid-cols-2">
+        <Link href="/account/orders" className="panel block hover:border-ink">
+          <p className="eyebrow text-muted mb-2">Orders</p>
+          <p>Your orders</p>
+          <p className="text-muted mt-1 text-small">Track and review what you have bought.</p>
+        </Link>
         <Link href="/account/details" className="panel block hover:border-ink">
           <p className="eyebrow text-muted mb-2">Account details</p>
           <p>{user.name}</p>

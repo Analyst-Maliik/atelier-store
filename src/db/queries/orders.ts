@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { and, asc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { orderItems, orders, stripeEvents, type OrderStatus } from "@/db/schema";
 import { CURRENCY } from "@/lib/checkout";
@@ -107,6 +107,34 @@ export async function getOrderWithItemsForUser(orderId: string, userId: string) 
     .where(eq(orderItems.orderId, order.id))
     .orderBy(asc(orderItems.id));
   return { order, items };
+}
+
+const ORDER_LIST_LIMIT = 50;
+
+/**
+ * The customer's orders, newest first, with the number of units in each. Abandoned
+ * checkouts (expired) are left out so the list shows real orders. Filtered by owner in SQL.
+ */
+export async function listOrdersForUser(userId: string) {
+  return db
+    .select({
+      id: orders.id,
+      orderNumber: orders.orderNumber,
+      status: orders.status,
+      totalCents: orders.totalCents,
+      createdAt: orders.createdAt,
+      // Written out in full: Drizzle drops table prefixes from interpolated columns, which
+      // would turn this correlated subquery into "order_id" = "id" against the wrong table.
+      itemCount: sql<number>`(
+        select coalesce(sum(oi.quantity), 0)::int
+          from order_items oi
+         where oi.order_id = orders.id
+      )`,
+    })
+    .from(orders)
+    .where(and(eq(orders.userId, userId), ne(orders.status, "expired")))
+    .orderBy(desc(orders.createdAt), desc(orders.orderNumber))
+    .limit(ORDER_LIST_LIMIT);
 }
 
 export type SettleResult =
