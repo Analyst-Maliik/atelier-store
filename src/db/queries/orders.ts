@@ -89,6 +89,26 @@ export async function getOrderWithItems(orderId: string) {
   return { order, items };
 }
 
+/**
+ * The customer's own order, or null. Ownership is part of the WHERE clause, so an order
+ * that belongs to someone else (or to nobody, like a guest checkout) is indistinguishable
+ * from one that does not exist and no row is ever read for the wrong user.
+ */
+export async function getOrderWithItemsForUser(orderId: string, userId: string) {
+  const [order] = await db
+    .select()
+    .from(orders)
+    .where(and(eq(orders.id, orderId), eq(orders.userId, userId)))
+    .limit(1);
+  if (!order) return null;
+  const items = await db
+    .select()
+    .from(orderItems)
+    .where(eq(orderItems.orderId, order.id))
+    .orderBy(asc(orderItems.id));
+  return { order, items };
+}
+
 export type SettleResult =
   | "paid" // this call confirmed the payment and decremented stock
   | "already_paid" // nothing to do: a previous call or event did it
